@@ -23,6 +23,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
    
 public class Freezeria extends JPanel implements MouseListener, MouseMotionListener, ImageObserver
 {
@@ -30,8 +33,9 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
    private static final int SIZEy = 800;    //size of square screen to be drawn
    private static final int textSize = 25;   //font size
    private static final int DELAY = 0;	      //#miliseconds delay between each time the screen refreshes for the timer
-   private static Timer t;							//used to control what happens each frame (game code)
-   
+   private static Timer t;	//used to control what happens each frame (game code)
+   private static int frame; 
+  
     //***BUTTON CODE***define array of buttons
    private Button [] buttons = new Button[4]; 
    private Button [] continueButton = new Button[1];               //buttons to activate features
@@ -41,17 +45,20 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
    protected static int mouseY;
    boolean firstClick=false;
    
+   private static int playerX, playerY;                        //position of the player  
+   private ImageIcon player = new ImageIcon("Xandra.png");     //image for the client player
+   private Player[] customers= new Player[1];
+   private ImageIcon[] utah = {new ImageIcon("Utah.png")};
+   
    private static final int STARTSCREEN=0, ORDER_STATION=1, BUILD=2, MIX = 3, TOPPING=4, EVALUATION=5; //different game modes
    private static int gameMode;                                       
    public Freezeria()
    {
-      gameMode = STARTSCREEN;
-                      
+      gameMode = STARTSCREEN;               
+      customers[0]= new Player("utah", SIZEx-200, SIZEy-370, 0, utah, 10, SIZEy);
      
-      //Sound.initialize();
-      //t = new Timer(DELAY, new Listener());	//the higher the value of DELAY, the slower the refresh rate is
-      //t.start();
-      //ImageObserver observer;
+      frame=0;
+      
       addMouseListener( this );
       addMouseMotionListener( this );
       mouseX = SIZEx/2;                       
@@ -59,17 +66,18 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
       
       
       Shape r2 = new Ellipse2D.Float(450, SIZEy-100,100, 50);
-      
       Shape r3 = new Ellipse2D.Float(600, SIZEy-100,100, 50);
       Shape r4 = new Ellipse2D.Float(750, SIZEy-100,100, 50);
       Shape r5 = new Ellipse2D.Float(900, SIZEy-100,100, 50);
+      //Shape r6 = new Rect(900, SIZEy-100,100, 50);
       //ImageIcon buttonImage1 = new ImageIcon("graphics/button1.jpg");
       //ImageIcon buttonImage2 = new ImageIcon("graphics/button2.jpg");
-      buttons[0] = new Button(r2, "Order Station", Color.CYAN, Color.YELLOW, Color.BLACK);
-      buttons[1] = new Button(r3, "Build", Color.CYAN, Color.YELLOW, Color.BLACK);
-      buttons[2] = new Button(r4, "Mix", Color.CYAN, Color.YELLOW, Color.BLACK);
-      buttons[3] = new Button(r5, "Toppings", Color.CYAN, Color.YELLOW, Color.BLACK);
-      continueButton[0] = new Button(r2, "CONTINUE", Color.CYAN, Color.YELLOW, Color.BLACK);
+      buttons[0] = new Button(r2, "Order",  new Color(100,222,80), Color.YELLOW, Color.BLACK);
+      buttons[1] = new Button(r3, "Build", new Color(125,73,213), Color.YELLOW, Color.BLACK);
+      buttons[2] = new Button(r4, "Mix", new Color(232,157,45), Color.YELLOW, Color.BLACK);
+      buttons[3] = new Button(r5, "Toppings", new Color(54,76,220), Color.YELLOW, Color.BLACK);
+      //buttons[4] = new Button(r5, "Toppings", Color.CYAN, Color.YELLOW, Color.BLACK);
+      continueButton[0] = new Button(r2, "CONTINUE", new Color(233,54,90), Color.YELLOW, Color.BLACK);
       //buttons[2] = new Button(r3, "sound", buttonImage1, buttonImage2);
    
    }
@@ -82,11 +90,13 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
          
       if(gameMode == ORDER_STATION)
       {
-         
          ImageIcon orderImage = new ImageIcon("order.png");
          g.drawImage(orderImage.getImage(), 0,0,SIZEx,SIZEy, null);
          drawButtons(buttons, g);
+         g.drawImage(customers[0].getPicture().getImage(), customers[0].getX(), customers[0].getY(), 200, 300, null);
       }
+      
+      
       else if(gameMode == BUILD)
       {
          ImageIcon buildImage = new ImageIcon("build.png");
@@ -108,11 +118,14 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
       
       else //if(gameMode == STARTSCREEN)       
       {
-         ImageIcon logoImage = new ImageIcon("Logo.png");
+         ImageIcon logoImage = new ImageIcon("BeginLogo.jpg");
          g.drawImage(logoImage.getImage(), 0,0,SIZEx,SIZEy, null);
          drawButtons(continueButton, g);		                              
       
       }
+      
+      t= new Timer(0, new Listener());
+      t.start();
    }
    
   
@@ -140,18 +153,9 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
          {
             if(b.getShape().contains(mouseX, mouseY))
             {
-               if(b.getTitle().equals("Order Station"))
+               if(b.getTitle().equals("Order"))
                {
-                  if (firstClick==false)
-                  {
-                     //t = new Timer(/*DELAY, new Listener()*/);	//the higher the value of DELAY, the slower the refresh rate is
-                     t.start();
-                     firstClick=true;
-                     gameMode=1;
-                  }
-                  else
-                     gameMode=1;
-                  
+                  gameMode=1;
                }
                else if(b.getTitle().equals("Build"))
                   gameMode=2;  
@@ -159,11 +163,8 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
                   gameMode=3;
                else if(b.getTitle().equals("Toppings"))
                   gameMode=4;
-               //else if(b.getTitle().equals("sound"))
-                  //gameMode=5;
             }
          }   
-      //*****************/
       } 
       else if(button == MouseEvent.BUTTON3)//right click
       {
@@ -238,5 +239,29 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
    public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height)
    {
       return false;
+   }
+   
+   private class Listener implements ActionListener
+   {
+      public void actionPerformed(ActionEvent e)
+      {
+         frame++;
+         if (frame==Integer.MAX_VALUE)
+            frame=0;
+      //if orrderstation and utah is not at the counter yet
+         //move utah to the left
+         if(gameMode == ORDER_STATION)
+         {
+            if(customers[0].getX()>200 && frame%100==0)
+            {
+               customers[0].setX(customers[0].getX()-1);
+            }
+            
+            
+         }
+         
+         repaint();
+         
+      }
    }
 }
