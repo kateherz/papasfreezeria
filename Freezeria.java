@@ -51,17 +51,22 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
    private Player[] customers= new Player[1];
    private ImageIcon[] utah = {new ImageIcon("Utah.png")};
    
+   private Player[] milkshake= new Player[1];
+   private ImageIcon[] strawberryMilkshake = {new ImageIcon("strawberryMilkshakePreMix.png")};
+   
    private int properOrderFlavor; //integer for the proper flavor customer wants
    private String OrderTicketFlavor;//the actual name of the flavor customer wants
    private int playerOrderFlavor;//the integer for the flavor that gameplayer clicked
    private String[] flavorWords= { "Peanut Butter Cup", "Strawberry","Blueberry"};//all possible flavors
    
+   boolean hasbeenmixed=false;
    private static final int STARTSCREEN=0, ORDER_STATION=1, BUILD=2, MIX = 3, TOPPING=4, EVALUATION=5; //different game modes
    private static int gameMode;                                       
    public Freezeria()
    {
       gameMode = STARTSCREEN;               
       customers[0]= new Player("utah", SIZEx-200, SIZEy-370, 0, utah, 10, SIZEy);
+      milkshake[0]= new Player("strawberry", 25, SIZEy-470, 0, strawberryMilkshake, 100, SIZEy);
       
       properOrderFlavor=(int)(Math.random()*(2))+1;
       OrderTicketFlavor= flavorWords[properOrderFlavor];
@@ -128,6 +133,7 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
          ImageIcon mixImage = new ImageIcon("mix.png");
          g.drawImage(mixImage.getImage(), 0,0,SIZEx,SIZEy, null);
          drawButtons(buttons, g);	
+         g.drawImage(milkshake[0].getPicture().getImage(), milkshake[0].getX(), milkshake[0].getY(), 200, 300, null);
       }
       else if(gameMode == TOPPING)
       {
@@ -185,19 +191,19 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
                   gameMode=4;
             }
          } 
-         for(Button b: flavorButtons) 
-         {
-            if(b.getShape().contains(mouseX, mouseY))
-            {
-               if(b.getImageIcon().equals("PeanutButterCup.png"))
-                  playerOrderFlavor = 1;
-               else if(b.getImageIcon().equals("Strawberry.png"))
-                  playerOrderFlavor = 2;
-               else if(b.getImageIcon().equals("Blueberry.png"))
-                  playerOrderFlavor = 3;
-            }
-         
-         } 
+         // for(Button b: flavorButtons) 
+      //          {
+      //             if(b.getShape().contains(mouseX, mouseY))
+      //             {
+      //                if(b.getImageIcon().equals("PeanutButterCup.png"))
+      //                   playerOrderFlavor = 1;
+      //                else if(b.getImageIcon().equals("Strawberry.png"))
+      //                   playerOrderFlavor = 2;
+      //                else if(b.getImageIcon().equals("Blueberry.png"))
+      //                   playerOrderFlavor = 3;
+      //             }
+      //          
+      //          } 
       } 
       else if(button == MouseEvent.BUTTON3)//right click
       {
@@ -278,6 +284,7 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
    {
       public void actionPerformed(ActionEvent e)
       {
+         boolean inPosition=false ;
          frame++;
          if (frame==Integer.MAX_VALUE)
             frame=0;
@@ -297,9 +304,57 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
             
             
          }
+         if(gameMode == MIX)
+         {
+            if( frame>100000 && milkshake[0].getX()<450 && frame%200==0)
+            {
+               milkshake[0].setX(milkshake[0].getX()+1);
+               if (milkshake[0].getY()>SIZEy-550)
+                  milkshake[0].setY(milkshake[0].getY()-1);
+               inPosition=true;
+            }
+             if(inPosition==true && frame>200000)
+             {
+               while (frame<400000)
+               {
+                  if (milkshake[0].getX()<470 && frame%100==0 )
+                     milkshake[0].setX(milkshake[0].getX()+1);
+                  if (milkshake[0].getX()>430 && frame%100==0)
+                     milkshake[0].setX(milkshake[0].getX()-1);
+                  //if (milkshake[0].getX()<450 && frame%100==0)
+                     //milkshake[0].setX(milkshake[0].getX()+1);
+                  
+                  
+                  // milkshake[0].setX(milkshake[0].getX()+40);
+                  // milkshake[0].setX(milkshake[0].getX()-80);
+                  // milkshake[0].setX(milkshake[0].getX()+40);
+                  // milkshake[0].setY(milkshake[0].getY()+40);
+                  // milkshake[0].setY(milkshake[0].getY()-80);
+                  // milkshake[0].setY(milkshake[0].getY()+40);
+               }
+            }
+         }
+      
+         if(gameMode == BUILD)
+         {
+            for(Button b: flavorButtons) 
+            {
+               if(b.getShape().contains(mouseX, mouseY))
+               {
+                  if(b.getImageIcon().equals("PeanutButterCup.png"))
+                     playerOrderFlavor = 1;
+                  else if(b.getImageIcon().equals("Strawberry.png"))
+                     playerOrderFlavor = 2;
+                  else if(b.getImageIcon().equals("Blueberry.png"))
+                     playerOrderFlavor = 3;
+               }
+            
+            } 
+         }
          
          repaint();
          
       }
    }
 }
+
