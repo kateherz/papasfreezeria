@@ -238,7 +238,7 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
          {
             //System.out.println("it works");
             JOptionPane.showMessageDialog(null, "Insert the Order Here", "Order for Utah" , JOptionPane.INFORMATION_MESSAGE);
-            }
+         }
       } 
       else if(button == MouseEvent.BUTTON3)//right click
       {
@@ -338,22 +338,8 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
             {
                customers[0].setX(customers[0].getX()-1);
             }
-            if(customers[0].getX()==200)
-            {
-               Shape order = new Ellipse2D.Float(450, SIZEy-500,100, 50);//how do I get a shape to just pop up
-            //order.drawShape(g);
-            }
-            
-            
          }
-         // if(gameMode == BUILD)
-         // {
-            // if(playerOrderFlavor==1)
-            // {
-               // g.drawImage(flavorButtonImage2.getImage(), 100,300,50,50, null);
-            // }
-         //    
-         // }
+         
          if(gameMode == MIX)
          {
             if( frame>100000 && milkshake[0].getX()<450 && frame%200==0)
@@ -369,8 +355,8 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
                {
                   if (milkshake[0].getX()<470 && frame%100==0 )
                      milkshake[0].setX(milkshake[0].getX()+1);
-                  if (milkshake[0].getX()>430 && frame%100==0)
-                     milkshake[0].setX(milkshake[0].getX()-1);
+                  //while(milkshake[0].getX()>430 && frame%100==0)
+                     //milkshake[0].setX(milkshake[0].getX()-1);
                   //if (milkshake[0].getX()<450 && frame%100==0)
                      //milkshake[0].setX(milkshake[0].getX()+1);
                   
