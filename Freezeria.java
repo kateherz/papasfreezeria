@@ -237,7 +237,7 @@ public class Freezeria extends JPanel implements MouseListener, MouseMotionListe
          if(orderButtonn.getShape().contains(mouseX, mouseY))
          {
             //System.out.println("it works");
-            JOptionPane.showMessageDialog(null, "Insert the Order Here", "Order for Utah" , JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Strawberry Milkshake \nRegular Mix \nWhip Cream + Cherry", "Order for Utah" , JOptionPane.INFORMATION_MESSAGE);
          }
       } 
       else if(button == MouseEvent.BUTTON3)//right click
